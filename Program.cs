@@ -28,9 +28,6 @@ namespace SharpEngine
                 glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0, 3);
                 glFlush();
-                vertices[1] -= 0.001f;
-                vertices[4] -= 0.001f;
-                vertices[7] -= 0.001f;
                 UpdateTriangleBuffer();
             }
         }
@@ -43,7 +40,7 @@ namespace SharpEngine
 
             //Create fragment shader
             var fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, File.ReadAllText("shaders/red-triangle.frag"));
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/green-triangle.frag"));
             glCompileShader(fragmentShader);
 
             //Create shader program - rendering pipeline
