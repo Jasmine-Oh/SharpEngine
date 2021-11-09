@@ -28,6 +28,7 @@ namespace SharpEngine
                 0f, .5f, 0f
             };
 
+            //Load the vertices into a buffer
             var vertexArray = glGenVertexArray();
             var vertexBuffer = glGenBuffer();
             glBindVertexArray(vertexArray);
@@ -71,7 +72,7 @@ namespace SharpEngine
             glShaderSource(fragmentShader, fragmentShaderSource);
             glCompileShader(fragmentShader);
             
-            //Create shader program - rendering
+            //Create shader program - rendering pipeline
             var program = glCreateProgram();
             glAttachShader(program, vertexShader);
             glAttachShader(program, fragmentShader);
