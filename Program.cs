@@ -23,15 +23,14 @@ namespace SharpEngine
 
             //Engine rendering loop
             while (!Glfw.WindowShouldClose(window)) {
-                Glfw.PollEvents(); // react to window changes (position etc.)
+                Glfw.PollEvents();
                 glClearColor(.1f, .1f, .1f, 1);
                 glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0, 3);
                 glFlush();
-                //vertices[4] += 0.001f;
-                vertices[0] += 0.001f;
-                vertices[3] += 0.001f;
-                vertices[6] += 0.001f;
+                vertices[1] -= 0.001f;
+                vertices[4] -= 0.001f;
+                vertices[7] -= 0.001f;
                 UpdateTriangleBuffer();
             }
         }
