@@ -28,15 +28,17 @@ namespace SharpEngine
                 glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0, 3);
                 glFlush();
-                ShrinkTriangle();
+                ExpandTriangle();
                 UpdateTriangleBuffer();
             }
         }
 
-        static void ShrinkTriangle() {
-            vertices[0] += 0.001f;
-            vertices[3] -= 0.001f;
-            vertices[7] -= 0.0019f;
+        static void ExpandTriangle() {
+            vertices[0] -= 0.001f;
+            vertices[1] -= 0.001f;
+            vertices[3] += 0.001f;
+            vertices[4] -= 0.001f;
+            vertices[7] += 0.0019f;
         }
 
         static unsafe void LoadTriangleIntoBuffer() {
