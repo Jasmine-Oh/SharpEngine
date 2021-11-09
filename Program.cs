@@ -28,10 +28,28 @@ namespace SharpEngine
                 glClear(GL_COLOR_BUFFER_BIT);
                 glDrawArrays(GL_TRIANGLES, 0, 3);
                 glFlush();
+                ShrinkTriangle();
                 UpdateTriangleBuffer();
             }
         }
 
+        static void ShrinkTriangle() {
+            vertices[0] += 0.001f;
+            vertices[3] -= 0.001f;
+            vertices[7] -= 0.0019f;
+        }
+
+        static unsafe void LoadTriangleIntoBuffer() {
+            //Load the vertices into a buffer
+            var vertexArray = glGenVertexArray();
+            var vertexBuffer = glGenBuffer();
+            glBindVertexArray(vertexArray);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+            UpdateTriangleBuffer();
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
+            glEnableVertexAttribArray(0);
+        }
+        
         static void CreateShaderProgram() {
             //Create vertex shader
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -49,17 +67,6 @@ namespace SharpEngine
             glAttachShader(program, fragmentShader);
             glLinkProgram(program);
             glUseProgram(program);
-        }
-
-        static unsafe void LoadTriangleIntoBuffer() {
-            //Load the vertices into a buffer
-            var vertexArray = glGenVertexArray();
-            var vertexBuffer = glGenBuffer();
-            glBindVertexArray(vertexArray);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-            UpdateTriangleBuffer();
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
-            glEnableVertexAttribArray(0);
         }
         
         static unsafe void UpdateTriangleBuffer() {
