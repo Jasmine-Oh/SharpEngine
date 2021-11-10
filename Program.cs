@@ -64,11 +64,39 @@ namespace SharpEngine
                 Glfw.PollEvents();
                 ClearScreen();
                 Render(window);
+
+                /*HOMEWORK 1: Make the triangles go Top-Right using the + operator
+                Vector additionVector = new Vector(0.001f, 0.001f);
                 
                 for (int i = VertexX; i < vertices.Length; i++) {
-                    vertices[i] *= 1.0011f;
+                    vertices[i] += additionVector;
+                }*/
+
+                float moveSpeed = .001f;
+                float increase = .001f;
+                float decrease = -.001f;
+                float currentXDirection = increase;
+                float currentYDirection = increase;
+                Vector forceVector = new Vector(moveSpeed, moveSpeed);
+                Vector currentVector = new Vector();
+                bool hitWindowEdge;
+
+                for (int i = VertexX; i < vertices.Length; i++) {
+                    if (vertices[i].x >= 1) {
+                        currentXDirection = decrease;
+                    } else if (vertices[i].x <= -1) {
+                        currentXDirection = increase;
+                    }
+
+                    if (vertices[i].y >= 1) {
+                        currentXDirection = decrease;
+                    } else if (vertices[i].y <= -1) {
+                        currentXDirection = increase;
+                    }
                 }
-                
+
+
+
                 UpdateTriangleBuffer();
             }
         }
