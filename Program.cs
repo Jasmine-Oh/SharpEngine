@@ -9,11 +9,17 @@ namespace SharpEngine
     {
         static float[] vertices = new float[] {
             // vertex 1 x, y, z
-            -.5f, -.5f, 0f,
+            -.1f, -.1f, 0f,
             // vertex 2 x, y, z
-            .5f, -.5f, 0f,
+            .1f, -.1f, 0f,
             // vertex 3 x, y, z
-            0f, .5f, 0f
+            0f, .1f, 0f,
+            // vertex 4 x, y, z
+            .4f, .4f, 0f,
+            // vertex 5 x, y, z
+            .6f, .4f, 0f,
+            // vertex 6 x, y, z
+            .5f, .6f, 0f
         };
 
         private const int VertexX = 0;
@@ -28,7 +34,7 @@ namespace SharpEngine
             while (!Glfw.WindowShouldClose(window)) {
                 Glfw.PollEvents();
                 ClearScreen();
-                Render();
+                Render(window);
                 
                 for (int i = VertexX; i < vertices.Length; i ++) {
                     vertices[i] *= 1.001f;
@@ -43,9 +49,9 @@ namespace SharpEngine
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        private static void Render() {
+        private static void Render(Window window) {
             glDrawArrays(GL_TRIANGLES, 0, vertices.Length / 3);
-            glFlush();
+            Glfw.SwapBuffers(window);
         }
 
         static void ExpandTriangle() {
@@ -101,7 +107,7 @@ namespace SharpEngine
             Glfw.WindowHint(Hint.Decorated, true);
             Glfw.WindowHint(Hint.OpenglProfile, Profile.Core);
             Glfw.WindowHint(Hint.OpenglForwardCompatible, Constants.True);
-            Glfw.WindowHint(Hint.Doublebuffer, Constants.False);
+            Glfw.WindowHint(Hint.Doublebuffer, Constants.True);
 
             //Create and launch a window
             var window = Glfw.CreateWindow(1024, 768, "SharpEngine", Monitor.None, Window.None);
