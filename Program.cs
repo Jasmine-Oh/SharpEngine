@@ -30,8 +30,8 @@ namespace SharpEngine
                 ClearScreen();
                 Render();
                 
-                for (int i = VertexX; i < vertices.Length; i += VertexSize) {
-                    vertices[i] += 0.001f;
+                for (int i = VertexX; i < vertices.Length; i ++) {
+                    vertices[i] *= 0.99f;
                 }
                 
                 UpdateTriangleBuffer();
