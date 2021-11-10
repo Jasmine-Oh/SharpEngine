@@ -31,7 +31,7 @@ namespace SharpEngine
                 Render();
                 
                 for (int i = VertexX; i < vertices.Length; i ++) {
-                    vertices[i] *= 0.99f;
+                    vertices[i] *= 1.001f;
                 }
                 
                 UpdateTriangleBuffer();
