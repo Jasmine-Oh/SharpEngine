@@ -36,66 +36,52 @@ namespace SharpEngine
             return new Vector(vec.x / f, vec.y / f, vec.z / f);
         }
     }
-    
-    class Program
-    {
+
+    class Program {
         static Vector[] vertices = new Vector[] {
             //Triangle one
-            new Vector(-.1f, -.1f),
-            new Vector(.1f, -.1f),
-            new Vector(0f, .1f),
-            
+            //new Vector(-.1f, -.1f),
+            //new Vector(.1f, -.1f),
+            //new Vector(0f, .1f),
+
             //Triangle two
-            new Vector(.4f, .4f),
-            new Vector(.6f, .4f),
-            new Vector(.5f, .6f)
+            new Vector(.4f, .3f),
+            new Vector(.6f, .3f),
+            new Vector(.5f, .4f)
         };
 
         private const int VertexX = 0;
         private const int VertexSize = 3;
-        
+
         static void Main(string[] args) {
             Window window = CreateWindow();
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
 
+            Vector direction = new Vector(.005f, .005f);
             //Engine rendering loop
             while (!Glfw.WindowShouldClose(window)) {
                 Glfw.PollEvents();
                 ClearScreen();
                 Render(window);
-
-                /*HOMEWORK 1: Make the triangles go Top-Right using the + operator
-                Vector additionVector = new Vector(0.001f, 0.001f);
                 
-                for (int i = VertexX; i < vertices.Length; i++) {
-                    vertices[i] += additionVector;
-                }*/
+                for (int i = 0; i < vertices.Length; i++) {
+                    vertices[i] += direction;
+                }
 
-                float moveSpeed = .001f;
-                float increase = .001f;
-                float decrease = -.001f;
-                float currentXDirection = increase;
-                float currentYDirection = increase;
-                Vector forceVector = new Vector(moveSpeed, moveSpeed);
-                Vector currentVector = new Vector();
-                bool hitWindowEdge;
-
-                for (int i = VertexX; i < vertices.Length; i++) {
-                    if (vertices[i].x >= 1) {
-                        currentXDirection = decrease;
-                    } else if (vertices[i].x <= -1) {
-                        currentXDirection = increase;
-                    }
-
-                    if (vertices[i].y >= 1) {
-                        currentXDirection = decrease;
-                    } else if (vertices[i].y <= -1) {
-                        currentXDirection = increase;
+                for (int i = 0; i < vertices.Length; i++) {
+                    if (vertices[i].x >= 1 || vertices[i].x <= -1) {
+                        direction.x *= -1;
+                        break;
                     }
                 }
 
-
+                for (int i = 0; i < vertices.Length; i++) {
+                    if (vertices[i].y >= 1 || vertices[i].y <= -1) {
+                        direction.y *= -1;
+                        break;
+                    }
+                }
 
                 UpdateTriangleBuffer();
             }
