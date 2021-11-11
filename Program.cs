@@ -1,30 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
+﻿using System.IO;
 using GLFW;
 using static OpenGL.Gl;
 
 namespace SharpEngine
 {
-    public struct Vertex {
-        public Vector position;
-
-        public Vertex(Vector position) {
-            this.position = position;
-        }
-    }
-    
     class Program {
-        private static Vertex[] vertices = new Vertex[] {
-            /*
-            new Vertex(new Vector(0f, 0f)),
-            new Vertex(new Vector(1f, 0f)),
-            new Vertex(new Vector(0f, 1f)),*/
-
-            //Triangle two
-            new Vertex(new Vector(.4f, .3f)),
-            new Vertex(new Vector(.6f, .3f)),
-            new Vertex(new Vector(.5f, 5f))
+        static Vertex[] vertices = new Vertex[] {
+            new Vertex(new Vector(-0.5f, 0f), Color.Red),
+            new Vertex(new Vector(0.5f, 0f), Color.Green),
+            new Vertex(new Vector(0f, 1f), Color.Blue)
         };
         
         private const int VertexSize = 3;
@@ -73,11 +57,11 @@ namespace SharpEngine
                 }
 
                 scale *= multiplier;
-                if (scale <= 0.5f) {
+                if (scale <= 0.2f) {
                     multiplier = 1.008f;
                 }
                 
-                if (scale >= 1.5f) {
+                if (scale >= 0.6f) {
                     multiplier = 0.988f;
                 }
                 
@@ -123,25 +107,27 @@ namespace SharpEngine
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
             UpdateTriangleBuffer();
-            glVertexAttribPointer(0, VertexSize, GL_FLOAT, false, sizeof(Vector), NULL);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), NULL);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));
             glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
         }
         
         static unsafe void UpdateTriangleBuffer() {
             fixed (Vertex* vertex = &vertices[0]) {
-                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.Length, vertex, GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.Length, vertex, GL_DYNAMIC_DRAW);
             }
         }
         
         static void CreateShaderProgram() {
             //Create vertex shader
             uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, File.ReadAllText("shaders/screen-coordinates.vert"));
+            glShaderSource(vertexShader, File.ReadAllText("shaders/position-color.vert"));
             glCompileShader(vertexShader);
 
             //Create fragment shader
             uint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, File.ReadAllText("shaders/green.frag"));
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/vertex-color.frag"));
             glCompileShader(fragmentShader);
 
             //Create shader program - rendering pipeline

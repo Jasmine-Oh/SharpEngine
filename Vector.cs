@@ -7,7 +7,7 @@ namespace SharpEngine {
         public Vector(float x, float y, float z) {
             this.x = x;
             this.y = y;
-            this.z = y;
+            this.z = z;
         }
 
         public Vector(float x, float y) {
