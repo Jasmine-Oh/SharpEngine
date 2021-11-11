@@ -1,7 +1,7 @@
 using System;
 
 namespace SharpEngine {
-    struct Vector {
+    public struct Vector {
         public float x, y, z;
 
         public Vector(float x, float y, float z) {

@@ -6,73 +6,30 @@ using static OpenGL.Gl;
 
 namespace SharpEngine
 {
-    struct Vector {
-        public float x, y, z;
+    public struct Vertex {
+        public Vector position;
 
-        public Vector(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = y;
-        }
-
-        public Vector(float x, float y) {
-            this.x = x;
-            this.y = y;
-            z = 0;
-        }
-        
-        public static Vector operator +(Vector vecOne, Vector vecTwo) {
-            return new Vector(vecOne.x + vecTwo.x, vecOne.y + vecTwo.y, vecOne.z + vecTwo.z);
-        }
-        
-        public static Vector operator -(Vector vecOne, Vector vecTwo) {
-            return new Vector(vecOne.x + -vecTwo.x, vecOne.y + -vecTwo.y, vecOne.z + -vecTwo.z);
-        }
-
-        public static Vector operator *(Vector vec, float f) {
-            return new Vector(vec.x * f, vec.y * f, vec.z * f);
-        }
-
-        public static Vector operator /(Vector vec, float f) {
-            return new Vector(vec.x / f, vec.y / f, vec.z / f);
-        }
-        
-        public static Vector Max(Vector a, Vector b) {
-            return new Vector(MathF.Max(a.x, b.x), MathF.Max(a.y, b.y), MathF.Max(a.z, b.z));
-        }
-
-        public static Vector Min(Vector a, Vector b) {
-            return new Vector(MathF.Min(a.x, b.x), MathF.Min(a.y, b.y), MathF.Min(a.z, b.z));
+        public Vertex(Vector position) {
+            this.position = position;
         }
     }
-
+    
     class Program {
-        static Vector[] vertices = new Vector[] {
-            //Triangle one
-            //new Vector(-.1f, -.1f),
-            //new Vector(.1f, -.1f),
-            //new Vector(0f, .1f),
+        private static Vertex[] vertices = new Vertex[] {
+            /*
+            new Vertex(new Vector(0f, 0f)),
+            new Vertex(new Vector(1f, 0f)),
+            new Vertex(new Vector(0f, 1f)),*/
 
             //Triangle two
-            new Vector(.4f, .3f),
-            new Vector(.6f, .3f),
-            new Vector(.5f, .5f)
+            new Vertex(new Vector(.4f, .3f)),
+            new Vertex(new Vector(.6f, .3f)),
+            new Vertex(new Vector(.5f, 5f))
         };
-
-        private const int VertexX = 0;
+        
         private const int VertexSize = 3;
 
         static void Main(string[] args) {
-            Console.WriteLine(Vector.Max(new Vector(1, 3), new Vector(4, 5)).x); // Output: 4
-            Console.WriteLine(Vector.Max(new Vector(1, 3), new Vector(4, 5)).y); // Output: 5
-            Console.WriteLine(Vector.Min(new Vector(1, 3), new Vector(4, 5)).x); // Output: 1
-            Console.WriteLine(Vector.Min(new Vector(1, 3), new Vector(4, 5)).y); // Output: 3
-
-            Console.WriteLine(Vector.Max(new Vector(3, 1), new Vector(2, 4)).x); // Output: 3
-            Console.WriteLine(Vector.Max(new Vector(3, 1), new Vector(2, 4)).y); // Output: 4
-            Console.WriteLine(Vector.Min(new Vector(3, 1), new Vector(2, 4)).x); // Output: 2
-            Console.WriteLine(Vector.Min(new Vector(3, 1), new Vector(2, 4)).y); // Output: 1
-            
             Window window = CreateWindow();
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
@@ -80,6 +37,7 @@ namespace SharpEngine
             Vector direction = new Vector(.005f, .005f);
             float multiplier = 0.888f;
             float scale = 1f;
+            
             //Engine rendering loop
             while (!Glfw.WindowShouldClose(window)) {
                 Glfw.PollEvents();
@@ -87,31 +45,31 @@ namespace SharpEngine
                 Render(window);
                 
                 for (int i = 0; i < vertices.Length; i++) {
-                    vertices[i] += direction;
+                    vertices[i].position += direction;
                 }
 
-                Vector min = vertices[0];
+                Vector min = vertices[0].position;
                 for (int i = 0; i < vertices.Length; i++) {
-                    min = Vector.Min(min, vertices[i]);
+                    min = Vector.Min(min, vertices[i].position);
                 }
 
-                Vector max = vertices[0];
+                Vector max = vertices[0].position;
                 for (int i = 0; i < vertices.Length; i++) {
-                    max = Vector.Max(max, vertices[i]);
+                    max = Vector.Max(max, vertices[i].position);
                 }
 
                 Vector center = (min + max) / 2;
                 
                 for (int i = 0; i < vertices.Length; i++) {
-                    vertices[i] -= center;
+                    vertices[i].position -= center;
                 }
                 
                 for (int i = 0; i < vertices.Length; i++) {
-                    vertices[i] *= multiplier;
+                    vertices[i].position *= multiplier;
                 }
                 
                 for (int i = 0; i < vertices.Length; i++) {
-                    vertices[i] += center;
+                    vertices[i].position += center;
                 }
 
                 scale *= multiplier;
@@ -124,14 +82,14 @@ namespace SharpEngine
                 }
                 
                 for (int i = 0; i < vertices.Length; i++) {
-                    if (vertices[i].x >= 1 && direction.x > 0 || vertices[i].x <= -1 && direction.x < 0) {
+                    if (vertices[i].position.x >= 1 && direction.x > 0 || vertices[i].position.x <= -1 && direction.x < 0) {
                         direction.x *= -1;
                         break;
                     }
                 }
 
                 for (int i = 0; i < vertices.Length; i++) {
-                    if (vertices[i].y >= 1 && direction.y > 0 || vertices[i].y <= -1 && direction.y < 0) {
+                    if (vertices[i].position.y >= 1 && direction.y > 0 || vertices[i].position.y <= -1 && direction.y < 0) {
                         direction.y *= -1;
                         break;
                     }
@@ -170,8 +128,8 @@ namespace SharpEngine
         }
         
         static unsafe void UpdateTriangleBuffer() {
-            fixed (Vector* vertex = &vertices[0]) {
-                glBufferData(GL_ARRAY_BUFFER, sizeof(Vector) * vertices.Length, vertex, GL_STATIC_DRAW);
+            fixed (Vertex* vertex = &vertices[0]) {
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.Length, vertex, GL_STATIC_DRAW);
             }
         }
         
