@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using GLFW;
 using static OpenGL.Gl;
 
@@ -35,6 +36,14 @@ namespace SharpEngine
         public static Vector operator /(Vector vec, float f) {
             return new Vector(vec.x / f, vec.y / f, vec.z / f);
         }
+        
+        public static Vector Max(Vector a, Vector b) {
+            return new Vector(MathF.Max(a.x, b.x), MathF.Max(a.y, b.y), MathF.Max(a.z, b.z));
+        }
+
+        public static Vector Min(Vector a, Vector b) {
+            return new Vector(MathF.Min(a.x, b.x), MathF.Min(a.y, b.y), MathF.Min(a.z, b.z));
+        }
     }
 
     class Program {
@@ -47,18 +56,30 @@ namespace SharpEngine
             //Triangle two
             new Vector(.4f, .3f),
             new Vector(.6f, .3f),
-            new Vector(.5f, .4f)
+            new Vector(.5f, .5f)
         };
 
         private const int VertexX = 0;
         private const int VertexSize = 3;
 
         static void Main(string[] args) {
+            Console.WriteLine(Vector.Max(new Vector(1, 3), new Vector(4, 5)).x); // Output: 4
+            Console.WriteLine(Vector.Max(new Vector(1, 3), new Vector(4, 5)).y); // Output: 5
+            Console.WriteLine(Vector.Min(new Vector(1, 3), new Vector(4, 5)).x); // Output: 1
+            Console.WriteLine(Vector.Min(new Vector(1, 3), new Vector(4, 5)).y); // Output: 3
+
+            Console.WriteLine(Vector.Max(new Vector(3, 1), new Vector(2, 4)).x); // Output: 3
+            Console.WriteLine(Vector.Max(new Vector(3, 1), new Vector(2, 4)).y); // Output: 4
+            Console.WriteLine(Vector.Min(new Vector(3, 1), new Vector(2, 4)).x); // Output: 2
+            Console.WriteLine(Vector.Min(new Vector(3, 1), new Vector(2, 4)).y); // Output: 1
+            
             Window window = CreateWindow();
             LoadTriangleIntoBuffer();
             CreateShaderProgram();
 
             Vector direction = new Vector(.005f, .005f);
+            float multiplier = 0.888f;
+            float scale = 1f;
             //Engine rendering loop
             while (!Glfw.WindowShouldClose(window)) {
                 Glfw.PollEvents();
@@ -69,15 +90,48 @@ namespace SharpEngine
                     vertices[i] += direction;
                 }
 
+                Vector min = vertices[0];
                 for (int i = 0; i < vertices.Length; i++) {
-                    if (vertices[i].x >= 1 || vertices[i].x <= -1) {
+                    min = Vector.Min(min, vertices[i]);
+                }
+
+                Vector max = vertices[0];
+                for (int i = 0; i < vertices.Length; i++) {
+                    max = Vector.Max(max, vertices[i]);
+                }
+
+                Vector center = (min + max) / 2;
+                
+                for (int i = 0; i < vertices.Length; i++) {
+                    vertices[i] -= center;
+                }
+                
+                for (int i = 0; i < vertices.Length; i++) {
+                    vertices[i] *= multiplier;
+                }
+                
+                for (int i = 0; i < vertices.Length; i++) {
+                    vertices[i] += center;
+                }
+
+                scale *= multiplier;
+                if (scale <= 0.5f) {
+                    multiplier = 1.008f;
+                }
+                
+                if (scale >= 1.5f) {
+                    multiplier = 0.988f;
+                }
+                
+                for (int i = 0; i < vertices.Length; i++) {
+                    if (vertices[i].x >= 1 && direction.x > 0 || vertices[i].x <= -1 && direction.x < 0) {
                         direction.x *= -1;
                         break;
                     }
                 }
 
                 for (int i = 0; i < vertices.Length; i++) {
-                    if (vertices[i].y >= 1 || vertices[i].y <= -1) {
+                    if (vertices[i].y >= 1 && direction.y > 0 || vertices[i].y <= -1 && direction.y < 0) {
                         direction.y *= -1;
                         break;
                     }
